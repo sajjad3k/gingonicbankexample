@@ -95,6 +95,7 @@ func Createcustomer(c *gin.Context) {
 func Deletecustomer(c *gin.Context) {
 	var resp models.Response
 	var customer models.Customer
+	var out []models.Customer
 	var flag bool = false
 	id := c.Params.ByName("id")
 	if id != "" {
@@ -105,13 +106,15 @@ func Deletecustomer(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, resp)
 			//c.AbortWithStatus(http.StatusInternalServerError)
 		} else {
-			for i, val := range p {
+			for _, val := range p {
 				if val.Id == id {
 					flag = true
-					customer = p[i]
-					p[i] = p[i+1]
+					customer = val
+					continue
 				}
+				out = append(out, val)
 			}
+			p := out
 			if flag != false {
 				resp.Data = append(resp.Data, customer)
 				resp.Status = "Success"
